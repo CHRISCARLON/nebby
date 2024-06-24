@@ -21,35 +21,34 @@ exqs --url "URL HERE"
 ## Example Output:
 
 ```zsh
-exqs --url "https://data.london.gov.uk/download/mps-monthly-crime-dahboard-data/7f45d2fe-bf69-4395-b814-cadd5ec48489/M1045_MonthlyCrimeDashboard_TNOCrimeData_202406.xlsx"
-Sheet Name: MPS_MonthlyCrimeDashboard_TNOCr
-Total number of columns: 12
-Total number of rows: 223821
-┌────────────────────────────┬───────────┐
-│ Column Headers             ┆ Data Type │
-╞════════════════════════════╪═══════════╡
-│ Column 1: Month_Year       ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 2: Area Type        ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 3: Borough_SNT      ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 4: Area name        ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 5: Area code        ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 6: Offence Group    ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 7: Offence Subgroup ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 8: Measure          ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 9: Financial Year   ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 10: FY_FYIndex      ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 11: Count           ┆ String    │
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
-│ Column 12: Refresh Date    ┆ String    │
-└────────────────────────────┴───────────┘
+Sheet Name: 2023
+Total number of columns: 7
+Total number of rows: 76
+┌───────────────────────────────────────────────┬───────────┐
+│ Column Headers                                ┆ Data Type │
+╞═══════════════════════════════════════════════╪═══════════╡
+│ Column 1: GENDER                              ┆ String    │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ Column 2: POSTCODE                            ┆ String    │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ Column 3: DOD                                 ┆ Unknown   │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ Column 4: AGE                                 ┆ Float     │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ Column 5: FUNERAL COST                        ┆ Float     │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ Column 6: COSTS RECOVERED                     ┆ Float     │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ Column 7: DATE REFERRED TO TREASURY SOLICITOR ┆ String    │
+└───────────────────────────────────────────────┴───────────┘
+Data Row 1: MALE LS25 41619 72 1590 1590 41900 
+Data Row 2: MALE LS22 41625 69 1350.54 1350.54 NOT REFERRED 
+Data Row 3: MALE LS8 41628 77 1702 0 NOT REFERRED 
+Data Row 4: MALE LS11 41653 63 2270 1673.4 NOT REFERRED 
+Data Row 5: MALE LS6 41654 54 1307 0 NOT REFERRED 
+Data Row 6: FEMALE LS12 41655 91 1474 1474 41767 
+Data Row 7: MALE LS14 41658 89 1630 1630 NOT REFERRED 
+Data Row 8: MALE LS12 41673 66 1378.5 1378.5 NOT REFERRED 
+Data Row 9: MALE LS3 41684 56 1660.64 855.49 NOT REFERRED 
+Data Row 10: FEMALE LS9 41689 46 1266 215.24 NOT REFERRED 
 ```
