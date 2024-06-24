@@ -4,7 +4,7 @@
 
 A simple CLI tool name Excel Quick Scan.  
 
-This is a very basic tool, for forgetful people like me, that provides basic information about excel files - for both remote and local excel files. 
+This is a very basic tool, for forgetful people like me, that provides basic information about excel files - both remote and local. 
 
 This is a project for me to practice Rust but I may make it available as a package in the future.  
 
