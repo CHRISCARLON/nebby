@@ -1,3 +1,5 @@
+// src/main.rs
+
 mod local_file_functions;
 mod remote_file_functions;
 use local_file_functions::display_basic_info;
@@ -5,7 +7,7 @@ use remote_file_functions::display_remote_basic_info;
 use clap::Parser;
 use std::path::PathBuf;
 
-/// A program to display Excel column headers
+/// A program to display basic Excel file information
 #[derive(Parser, Debug)]
 #[command(author = "Chris Carlon", version = "0.1", about = "Displays Basic Info About Excel Files", long_about = None)]
 struct Args {
