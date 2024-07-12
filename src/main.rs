@@ -8,7 +8,7 @@ use remote_file_functions::{
 };
 
 #[derive(Parser, Debug)]
-#[command(author = "Chris Carlon", version = "v0.1.0", about = "Excel Query and Statistics (EXQS) Tool", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.0", about = "Excel Query and Statistics (EXQS) Tool", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
