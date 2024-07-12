@@ -1,37 +1,66 @@
 // src/main.rs
-
-mod local_file_functions;
 mod remote_file_functions;
-use local_file_functions::display_basic_info;
-use remote_file_functions::display_remote_basic_info;
-use clap::Parser;
-use std::path::PathBuf;
 
-/// A program to display basic Excel file information
+use clap::{Parser, Subcommand};
+use colored::Colorize;
+use remote_file_functions::{
+    analyze_excel_formatting, display_remote_basic_info, fetch_remote_file,
+};
+
 #[derive(Parser, Debug)]
-#[command(author = "Chris Carlon", version = "0.1", about = "Displays Basic Info About Excel Files", long_about = None)]
-struct Args {
-    /// Path to the Excel file
-    #[arg(short, long)]
-    file: Option<PathBuf>,
+#[command(author = "Chris Carlon", version = "0.1", about = "Excel Query and Statistics (EXQS) Tool", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
 
-    /// URL of the Excel file
-    #[arg(short, long)]
-    url: Option<String>,
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Display basic information about the Excel file
+    Basic {
+        /// URL of the Excel file
+        #[arg(short, long)]
+        url: String,
+    },
+    /// Check formatting of the Excel file
+    Format {
+        /// URL of the Excel file
+        #[arg(short, long)]
+        url: String,
+    },
 }
 
 fn main() {
-    let args = Args::parse();
+    let cli = Cli::parse();
 
-    if let Some(file) = args.file {
-        if let Err(e) = display_basic_info(&file) {
-            eprintln!("Error processing file: {}", e);
-        }
-    } else if let Some(url) = args.url {
-        if let Err(e) = display_remote_basic_info(&url) {
-            eprintln!("Error processing URL: {}", e);
-        }
-    } else {
-        eprintln!("Please provide either a file path or a URL.");
+    match &cli.command {
+        Commands::Basic { url } => process_url(url, display_remote_basic_info, "basic info"),
+        Commands::Format { url } => process_url(url, analyze_excel_formatting, "formatting"),
+    }
+}
+
+fn process_url<F>(url: &str, process_fn: F, operation: &str)
+where
+    F: Fn(Vec<u8>) -> Result<(), Box<dyn std::error::Error>>,
+{
+    if url.is_empty() {
+        eprintln!("{}", "Error: URL cannot be empty".red());
+        return;
+    }
+
+    if !url.starts_with("http://") && !url.starts_with("https://") {
+        eprintln!("{}", "Error: URL must start with http:// or https://".red());
+        return;
+    }
+
+    match fetch_remote_file(url) {
+        Ok(content) => match process_fn(content) {
+            Ok(_) => println!(
+                "{}",
+                format!("Successfully Processed {}!", operation).green()
+            ),
+            Err(e) => eprintln!("{}", format!("Error processing file content: {}", e).red()),
+        },
+        Err(e) => eprintln!("{}", format!("Error fetching file from URL: {}", e).red()),
     }
 }
