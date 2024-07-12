@@ -53,6 +53,8 @@ Data Row 9: MALE LS3 41684 56 1660.64 855.49 NOT REFERRED
 Data Row 10: FEMALE LS9 41689 46 1266 215.24 NOT REFERRED
 ```
 
+## Example Output for exqs format:
+
 ```text
 Analysing sheet: Cover sheet
 Formatting issues:
