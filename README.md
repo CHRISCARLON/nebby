@@ -52,3 +52,51 @@ Data Row 8: MALE LS12 41673 66 1378.5 1378.5 NOT REFERRED
 Data Row 9: MALE LS3 41684 56 1660.64 855.49 NOT REFERRED
 Data Row 10: FEMALE LS9 41689 46 1266 215.24 NOT REFERRED
 ```
+
+```zsh
+Analysing sheet: Cover sheet
+Formatting issues:
+- No header row found at all
+- Sheet contains 3 merged region(s)
+Analysing sheet: Instructions
+Formatting issues:
+- The header is not on the first row. Found on row 12
+- Sheet contains 11 merged region(s)
+Analysing sheet: Overview
+Formatting issues:
+- The header is not on the first row. Found on row 4
+Analysing sheet: Resilience
+Formatting issues:
+- The header is not on the first row. Found on row 6
+- Sheet contains 1 merged region(s)
+Analysing sheet: Buildings & Energy
+Formatting issues:
+- The header is not on the first row. Found on row 6
+- Sheet contains 1 merged region(s)
+Analysing sheet: Transport
+Formatting issues:
+- The header is not on the first row. Found on row 6
+- Sheet contains 1 merged region(s)
+Analysing sheet: Waste
+Formatting issues:
+- The header is not on the first row. Found on row 6
+- Sheet contains 1 merged region(s)
+Analysing sheet: People
+Formatting issues:
+- The header is not on the first row. Found on row 6
+- Sheet contains 1 merged region(s)
+Analysing sheet: EqIA
+Formatting issues:
+- The header is not on the first row. Found on row 3
+Analysing sheet: Results
+Formatting issues:
+- The header is not on the first row. Found on row 7
+- Sheet contains 1 merged region(s)
+Analysing sheet: Guidance
+No formatting issues found.
+Analysing sheet: Lists
+No formatting issues found.
+Analysing sheet: Background lookup tables
+No formatting issues found.
+Successfully Processed formatting!
+```
