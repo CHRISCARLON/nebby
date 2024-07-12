@@ -20,7 +20,7 @@ exqs format --url "URL to Excel File here"
 
 ## Example Output for exqs basic:
 
-```zsh
+```text
 Sheet Name: 2023
 Total number of columns: 7
 Total number of rows: 76
@@ -53,7 +53,7 @@ Data Row 9: MALE LS3 41684 56 1660.64 855.49 NOT REFERRED
 Data Row 10: FEMALE LS9 41689 46 1266 215.24 NOT REFERRED
 ```
 
-```zsh
+```text
 Analysing sheet: Cover sheet
 Formatting issues:
 - No header row found at all
@@ -69,7 +69,7 @@ Analysing sheet: Resilience
 Formatting issues:
 - The header is not on the first row. Found on row 6
 - Sheet contains 1 merged region(s)
-Analysing sheet: Buildings & Energy
+Analysing sheet: Buildings and Energy
 Formatting issues:
 - The header is not on the first row. Found on row 6
 - Sheet contains 1 merged region(s)
