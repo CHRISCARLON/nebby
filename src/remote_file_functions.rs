@@ -78,57 +78,61 @@ pub fn analyze_excel_formatting(content: Vec<u8>) -> Result<(), Box<dyn std::err
 }
 
 pub fn excel_quick_view(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
-    let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
-    for (index, sheet_name) in workbook.sheet_names().iter().enumerate() {
+    let cursor = Cursor::new(content);
+    let mut workbook: Xlsx<_> = Xlsx::new(cursor)?;
+
+    for sheet_name in workbook.sheet_names().to_vec() {
         println!("Sheet: {}", sheet_name);
         println!("--------------------");
-        if let Some(Ok(range)) = workbook.worksheet_range_at(index) {
-            let max_columns = 5; // Adjust this to show more or fewer columns
-            let max_rows = 10; // Maximum number of rows to display
-            let mut max_widths = vec![0; max_columns];
-            let rows: Vec<Vec<String>> = range
-                .rows()
-                .take(max_rows) // Limit to max_rows
-                .map(|row| {
-                    row.iter()
+
+        match workbook.worksheet_range(&sheet_name) {
+            Ok(range) => {
+                let max_columns = 10; // Adjust this to show more or fewer columns
+                let max_rows = 10; // Maximum number of rows to display
+                let mut table: Vec<Vec<String>> = Vec::new();
+
+                for (row_index, row) in range.rows().enumerate() {
+                    if row_index >= max_rows {
+                        break;
+                    }
+                    let row_data: Vec<String> = row
+                        .iter()
                         .take(max_columns)
                         .map(|cell| cell.to_string().trim().to_owned())
-                        .collect()
-                })
-                .collect();
-            // Calculate max width for each column
-            for row in &rows {
-                for (i, cell) in row.iter().enumerate() {
-                    if cell.len() > max_widths[i] {
-                        max_widths[i] = cell.len().min(15); // Limit column width to 15 characters
-                    }
+                        .collect();
+                    table.push(row_data);
                 }
-            }
-            // Print rows with proper alignment
-            for row in rows {
-                let mut row_empty = true;
-                for (i, cell) in row.iter().enumerate() {
-                    if !cell.is_empty() {
+
+                // Calculate max width for each column
+                let max_widths: Vec<usize> = (0..max_columns)
+                    .map(|col| {
+                        table
+                            .iter()
+                            .map(|row| row.get(col).map_or(0, |cell| cell.len()))
+                            .max()
+                            .unwrap_or(0)
+                            .min(30)
+                    })
+                    .collect();
+
+                // Print table
+                for row in table {
+                    for (i, cell) in row.iter().enumerate() {
                         if cell.len() > max_widths[i] {
                             print!("{:.width$}..  ", cell, width = max_widths[i] - 2);
                         } else {
                             print!("{:<width$}  ", cell, width = max_widths[i]);
                         }
-                        row_empty = false;
-                    } else {
-                        print!("{:<width$}  ", "", width = max_widths[i]);
                     }
-                }
-                if !row_empty {
                     println!();
                 }
+
+                // If there are more rows, indicate that
+                if range.rows().count() > max_rows {
+                    println!("... (more rows not shown)");
+                }
             }
-            // If there are more rows, indicate that
-            if range.rows().count() > max_rows {
-                println!("... (more rows not shown)");
-            }
-        } else {
-            println!("Failed to read sheet");
+            Err(e) => println!("Failed to read sheet: {}", e),
         }
         println!("\n");
     }
