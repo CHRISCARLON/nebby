@@ -1,6 +1,27 @@
 use exqs::remote_file_functions::{
-    analyze_excel_formatting, display_remote_basic_info, fetch_remote_file,
+    analyze_excel_formatting, display_remote_basic_info, excel_quick_view, fetch_remote_file,
 };
+
+#[test]
+fn test_excel_quick_view() {
+    // Test URL for a valid remote Excel file
+    let url = "https://datamillnorth.org/download/2o13g/c476394e-8294-4c15-b1ff-44d32e6809c2/06.2024.%20.xlsx";
+
+    // First, fetch the file
+    let fetch_result = fetch_remote_file(url);
+    assert!(fetch_result.is_ok(), "Failed to fetch the remote file");
+
+    // If fetch was successful, proceed to quick view
+    if let Ok(content) = fetch_result {
+        // Call excel_quick_view and check if it's Ok - check no errors are returned.
+        // This is only a basic test to begin with - needs to be made better in the future.
+        let quick_view_result = excel_quick_view(content);
+        assert!(
+            quick_view_result.is_ok(),
+            "Failed to perform quick view of Excel file"
+        );
+    }
+}
 
 #[test]
 pub fn test_analyze_excel_formatting() {

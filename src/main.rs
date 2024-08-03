@@ -1,14 +1,13 @@
 // src/main.rs
 mod remote_file_functions;
-
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 use remote_file_functions::{
-    analyze_excel_formatting, display_remote_basic_info, fetch_remote_file,
+    analyze_excel_formatting, display_remote_basic_info, excel_quick_view, fetch_remote_file,
 };
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.0", about = "Excel Query and Statistics (EXQS) Tool", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.0", about = "Excel Quick Scan - quickly review basic information about any xlsx file", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -28,14 +27,20 @@ enum Commands {
         #[arg(short, long)]
         url: String,
     },
+    /// Quick view of the Excel file
+    QuickView {
+        /// URL of the Excel file
+        #[arg(short, long)]
+        url: String,
+    },
 }
 
 fn main() {
     let cli = Cli::parse();
-
     match &cli.command {
         Commands::Basic { url } => process_url(url, display_remote_basic_info, "basic info"),
         Commands::Format { url } => process_url(url, analyze_excel_formatting, "formatting"),
+        Commands::QuickView { url } => process_url(url, excel_quick_view, "quick view"),
     }
 }
 
@@ -47,12 +52,10 @@ where
         eprintln!("{}", "Error: URL cannot be empty".red());
         return;
     }
-
     if !url.starts_with("http://") && !url.starts_with("https://") {
         eprintln!("{}", "Error: URL must start with http:// or https://".red());
         return;
     }
-
     match fetch_remote_file(url) {
         Ok(content) => match process_fn(content) {
             Ok(_) => println!(

@@ -77,6 +77,64 @@ pub fn analyze_excel_formatting(content: Vec<u8>) -> Result<(), Box<dyn std::err
     Ok(())
 }
 
+pub fn excel_quick_view(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+    let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
+    for (index, sheet_name) in workbook.sheet_names().iter().enumerate() {
+        println!("Sheet: {}", sheet_name);
+        println!("--------------------");
+        if let Some(Ok(range)) = workbook.worksheet_range_at(index) {
+            let max_columns = 5; // Adjust this to show more or fewer columns
+            let max_rows = 10; // Maximum number of rows to display
+            let mut max_widths = vec![0; max_columns];
+            let rows: Vec<Vec<String>> = range
+                .rows()
+                .take(max_rows) // Limit to max_rows
+                .map(|row| {
+                    row.iter()
+                        .take(max_columns)
+                        .map(|cell| cell.to_string().trim().to_owned())
+                        .collect()
+                })
+                .collect();
+            // Calculate max width for each column
+            for row in &rows {
+                for (i, cell) in row.iter().enumerate() {
+                    if cell.len() > max_widths[i] {
+                        max_widths[i] = cell.len().min(15); // Limit column width to 15 characters
+                    }
+                }
+            }
+            // Print rows with proper alignment
+            for row in rows {
+                let mut row_empty = true;
+                for (i, cell) in row.iter().enumerate() {
+                    if !cell.is_empty() {
+                        if cell.len() > max_widths[i] {
+                            print!("{:.width$}..  ", cell, width = max_widths[i] - 2);
+                        } else {
+                            print!("{:<width$}  ", cell, width = max_widths[i]);
+                        }
+                        row_empty = false;
+                    } else {
+                        print!("{:<width$}  ", "", width = max_widths[i]);
+                    }
+                }
+                if !row_empty {
+                    println!();
+                }
+            }
+            // If there are more rows, indicate that
+            if range.rows().count() > max_rows {
+                println!("... (more rows not shown)");
+            }
+        } else {
+            println!("Failed to read sheet");
+        }
+        println!("\n");
+    }
+    Ok(())
+}
+
 pub fn display_remote_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     // Create workbook
     let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
