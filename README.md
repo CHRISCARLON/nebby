@@ -18,7 +18,7 @@ exqs basic --url "URL to Excel File here"
 exqs format --url "URL to Excel File here"
 ```
 
-## Example Output for exqs basic:
+## Example Output for exqs basic / exqs basic index:
 
 ```text
 Sheet Name: 2023
@@ -101,4 +101,22 @@ No formatting issues found.
 Analysing sheet: Background lookup tables
 No formatting issues found.
 Successfully Processed formatting!
+```
+
+## Example output for exqs quick view:
+
+```text
+Sheet: Sheet1
+--------------------
+Property..  Uprn      Account ..  Address     Postcode  Empty       Liabilit..  Empty from  Exemptio..  Rateable..  Vo Prop ..  Vo Propd..
+20101143..  72563680  THE THAC..  THACKRAY..  LS9 7LN   Occupied..  40269                               60500       EM1         MUSEUM A..
+20101595..  72768691  SKYLORD ..  116-118 ..  LS8 5NA   Occupied..  42856                               10750       CS          SHOP AND..
+20101723..  72522137  HANG WON..  21 BLENH..  LS2 9HJ   Occupied..  44228                               75000       CS          SHOP AND..
+20101723..  72022950  NOODLEST..  27 BLENH..  LS2 9HD   Occupied..  43424                               29250       CS          SHOP AND..
+20101726..  72022901  YORKSHIR..  BSMT GRO..  LS2 9HZ   Occupied..  41820                               30500       CO          OFFICES ..
+20101726..  72745783  HESHUO LTD  GROUND F..  LS2 9HZ   Occupied..  44652                               16000       CR          RESTAURA..
+20101726..  72745782  HESHUO LTD  BASEMENT..  LS2 9HZ   Occupied..  44652                               9100        CR1         CAFE AND..
+20101726..  72744812  AKSHARMU..  GROUND F..  LS2 9HD   Occupied..  44985                               35750       CS          SHOP AND..
+20102443..  72557839  M. B. LO..  ST ANDRE..  LS3 1JX   Occupied..  40269                               23250       CW          WAREHOUS..
+... only showing 10 rows out of approximately 22809
 ```
