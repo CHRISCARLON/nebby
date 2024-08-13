@@ -1,7 +1,7 @@
 # Excel Quick Scan
 
 > [!NOTE]
-> Reaming project 'Nebby'.
+> Renaming project to 'Nebby' - Northern English slang for nosy.
 > Expanding project beyond just excel files.
 
 ## WORK IN PROGRESS
