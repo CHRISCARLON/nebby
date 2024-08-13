@@ -1,5 +1,9 @@
 # Excel Quick Scan
 
+> [!NOTE]
+> Reaming project 'Nebby'.
+> Expanding project beyond just excel files.
+
 ## WORK IN PROGRESS
 
 A simple CLI tool named Excel Quick Scan (ExQS).

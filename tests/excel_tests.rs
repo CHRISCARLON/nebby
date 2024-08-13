@@ -1,4 +1,4 @@
-use exqs::remote_file_functions::{
+use exqs::excel_file_functions::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
 };
