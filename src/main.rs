@@ -3,7 +3,8 @@ mod remote_file_functions;
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 use remote_file_functions::{
-    analyze_excel_formatting, display_remote_basic_info, excel_quick_view, fetch_remote_file,
+    analyze_excel_formatting, display_remote_basic_info,
+    display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
 };
 
 #[derive(Parser, Debug)]
@@ -33,6 +34,16 @@ enum Commands {
         #[arg(short, long)]
         url: String,
     },
+    /// Experimental basic information feature - add --header-index int to the end
+    BasicIdx {
+        /// URL of the Excel file
+        #[arg(short, long)]
+        url: String,
+
+        /// Index of the header row (0-based)
+        #[arg(short, long, default_value = "0")]
+        header_index: usize,
+    },
 }
 
 fn main() {
@@ -41,6 +52,11 @@ fn main() {
         Commands::Basic { url } => process_url(url, display_remote_basic_info, "basic info"),
         Commands::Format { url } => process_url(url, analyze_excel_formatting, "formatting"),
         Commands::QuickView { url } => process_url(url, excel_quick_view, "quick view"),
+        Commands::BasicIdx { url, header_index } => process_url(
+            url,
+            |content| display_remote_basic_info_specify_header_idx(content, *header_index),
+            "basic info experimental",
+        ),
     }
 }
 
