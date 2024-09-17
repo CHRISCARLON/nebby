@@ -1,2 +1,3 @@
 // src/lib.rs
-pub mod remote_file_functions;
+pub mod excel_file_functions;
+pub mod reqwest_functions;

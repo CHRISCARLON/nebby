@@ -10,9 +10,9 @@ cargo clean
 cargo build --release
 
 # Install the binary
-sudo cp target/release/exqs /usr/local/bin/
+sudo cp target/release/nebb /usr/local/bin/
 
 # Verify the installation
-which exqs
+which nebb
 
-echo "exqs has been rebuilt and installed successfully!"
+echo "nebby has been rebuilt and installed successfully!"
