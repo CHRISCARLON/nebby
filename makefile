@@ -1,7 +1,7 @@
 # Makefile for Nebby GitHub Release and Tagging
 
 # Variables
-VERSION := $(shell cargo pkgid | cut -d# -f2 | cut -d: -f2)
+VERSION := $(shell cargo pkgid | cut -d\# -f2 | cut -d: -f2)
 
 .PHONY: release
 
