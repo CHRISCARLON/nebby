@@ -1,4 +1,4 @@
-use exqs::reqwest_functions::simple_api_get_reqwest;
+use nebby::reqwest_functions::simple_api_get_reqwest;
 
 #[test]
 fn test_simple_api_get_reqwest() {
