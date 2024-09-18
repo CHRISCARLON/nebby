@@ -3,7 +3,7 @@ mod bytes;
 mod excel;
 mod utils;
 use api::simple_api_get_reqwest;
-use bytes::view_bytes;
+use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
 use excel::{
     analyze_excel_formatting, display_remote_basic_info,
@@ -12,7 +12,7 @@ use excel::{
 use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.1", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.2", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -109,8 +109,8 @@ fn process_excel_with_header(
 fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
     let pb = create_progress_bar("Viewing first 100 bytes...");
-    let bytes = view_bytes(url)?;
-    pb.finish_with_message("Bytes Processed");
+    let (bytes, file_type) = view_bytes(url)?;
+    pb.finish_and_clear();
     println!("First 100 bytes:");
     for (i, byte) in bytes.iter().enumerate() {
         print!("{:02X} ", byte);
@@ -118,7 +118,7 @@ fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
             println!();
         }
     }
-    println!();
+    println!("\nDetected file type: {}", get_file_type_string(&file_type));
     Ok(())
 }
 
