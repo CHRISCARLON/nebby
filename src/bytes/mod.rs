@@ -1,4 +1,3 @@
-// src/file_bytes.rs
 use reqwest::blocking::get;
 use std::io::Read;
 

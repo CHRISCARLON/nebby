@@ -1,4 +1,3 @@
-// src/reqwest_functions.rs
 use colored::Colorize;
 use reqwest::blocking::get;
 use serde_json::Value;

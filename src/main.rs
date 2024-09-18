@@ -1,15 +1,15 @@
-// src/main.rs
 mod api;
 mod bytes;
 mod excel;
+mod utils;
 use api::simple_api_get_reqwest;
 use bytes::view_bytes;
 use clap::{Parser, Subcommand};
-use colored::Colorize;
 use excel::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
 };
+use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
 #[command(author = "Christopher Carlon", version = "0.1.1", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
@@ -69,20 +69,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
-    println!("{}", "Processing JSON...".blue());
-    simple_api_get_reqwest(url)
+    let pb = create_progress_bar("Processing JSON...");
+    let result = simple_api_get_reqwest(url);
+    pb.finish_with_message("JSON Processed");
+    result
 }
 
 fn process_excel(url: &str, operation: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
-    println!("{}", format!("Processing Excel {}...", operation).blue());
+    let pb = create_progress_bar(&format!("Processing Excel {}...", operation));
     let bytes = fetch_remote_file(url)?;
-    match operation {
+
+    let result = match operation {
         "basic info" => display_remote_basic_info(bytes),
         "formatting" => analyze_excel_formatting(bytes),
         "quick view" => excel_quick_view(bytes),
         _ => Err("Unknown operation".into()),
-    }
+    };
+
+    pb.finish_with_message("Excel Processed");
+    result
 }
 
 fn process_excel_with_header(
@@ -90,22 +96,21 @@ fn process_excel_with_header(
     header_index: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
-    println!(
-        "{}",
-        format!(
-            "Processing Excel with header set at INDEX {}...",
-            header_index
-        )
-        .blue()
-    );
+    let pb = create_progress_bar(&format!(
+        "Processing Excel with header set at INDEX {}...",
+        header_index
+    ));
     let bytes = fetch_remote_file(url)?;
-    display_remote_basic_info_specify_header_idx(bytes, header_index)
+    let result = display_remote_basic_info_specify_header_idx(bytes, header_index);
+    pb.finish_with_message("Excel processing with header complete");
+    result
 }
 
 fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
-    println!("{}", "Viewing first 100 bytes...".blue());
+    let pb = create_progress_bar("Viewing first 100 bytes...");
     let bytes = view_bytes(url)?;
+    pb.finish_with_message("Bytes Processed");
     println!("First 100 bytes:");
     for (i, byte) in bytes.iter().enumerate() {
         print!("{:02X} ", byte);

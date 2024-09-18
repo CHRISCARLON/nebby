@@ -1,4 +1,3 @@
-// src/excel_file_functions.rs
 use calamine::{DataType, Reader, Xlsx};
 use colored::Colorize;
 use comfy_table::{Attribute, Cell, Color, Table};
