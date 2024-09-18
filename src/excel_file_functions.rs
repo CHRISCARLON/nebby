@@ -6,7 +6,7 @@ use reqwest::blocking::get;
 use std::io::Cursor;
 
 pub fn analyze_excel_formatting(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
-    // Create workbook
+    // Create new workbook
     let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
 
     for (index, sheet_name) in workbook.sheet_names().to_vec().iter().enumerate() {
@@ -144,15 +144,15 @@ pub fn excel_quick_view(content: Vec<u8>) -> Result<(), Box<dyn std::error::Erro
 }
 
 pub fn display_remote_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
-    // Create workbook
+    // Create new workbook
     let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
 
     // Add sheet names to list
     let sheet_names = workbook.sheet_names().to_vec();
 
-    // Loop through sheet names
-    for sheet_name in sheet_names {
-        if let Some(Ok(range)) = workbook.worksheet_range_at(0) {
+    // Loop through sheets
+    for (index, sheet_name) in sheet_names.iter().enumerate() {
+        if let Some(Ok(range)) = workbook.worksheet_range_at(index) {
             let mut table = Table::new();
             table.load_preset(comfy_table::presets::UTF8_FULL);
             table.set_header(vec![
@@ -240,13 +240,13 @@ pub fn display_remote_basic_info_specify_header_idx(
     content: Vec<u8>,
     header_index: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // Create workbook
+    // Create new workbook
     let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
     // Add sheet names to list
     let sheet_names = workbook.sheet_names().to_vec();
     // Loop through sheet names
-    for sheet_name in sheet_names {
-        if let Some(Ok(range)) = workbook.worksheet_range_at(0) {
+    for (index, sheet_name) in sheet_names.iter().enumerate() {
+        if let Some(Ok(range)) = workbook.worksheet_range_at(index) {
             let mut table = Table::new();
             table.load_preset(comfy_table::presets::UTF8_FULL);
             table.set_header(vec![
