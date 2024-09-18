@@ -10,7 +10,7 @@ use excel_file_functions::{
 use reqwest_functions::simple_api_get_reqwest;
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.0", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.1", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
