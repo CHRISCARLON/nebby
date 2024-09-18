@@ -1,4 +1,4 @@
-use nebby::excel_file_functions::{
+use nebby::excel::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
 };

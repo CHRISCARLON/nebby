@@ -4,7 +4,7 @@
 set -e
 
 # Clean the project
-cargo clean
+# cargo clean
 
 # Build the project in release mode
 cargo build --release

@@ -1,13 +1,15 @@
 // src/main.rs
-mod excel_file_functions;
-mod reqwest_functions;
+mod api;
+mod bytes;
+mod excel;
+use api::simple_api_get_reqwest;
+use bytes::view_bytes;
 use clap::{Parser, Subcommand};
 use colored::Colorize;
-use excel_file_functions::{
+use excel::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
 };
-use reqwest_functions::simple_api_get_reqwest;
 
 #[derive(Parser, Debug)]
 #[command(author = "Christopher Carlon", version = "0.1.1", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
@@ -46,6 +48,11 @@ enum Commands {
         /// API Endpoint
         url: String,
     },
+    /// Check bytes of any file
+    Nibble {
+        /// Url of the file
+        url: String,
+    },
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -56,6 +63,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::QuickView { url } => process_excel(url, "quick view"),
         Commands::BasicIdx { url, header_index } => process_excel_with_header(url, *header_index),
         Commands::BasicJson { url } => process_json(url),
+        Commands::Nibble { url } => process_view_bytes(url),
     }
 }
 
@@ -84,10 +92,29 @@ fn process_excel_with_header(
     validate_url(url)?;
     println!(
         "{}",
-        format!("Processing Excel with header index {}...", header_index).blue()
+        format!(
+            "Processing Excel with header set at INDEX {}...",
+            header_index
+        )
+        .blue()
     );
     let bytes = fetch_remote_file(url)?;
     display_remote_basic_info_specify_header_idx(bytes, header_index)
+}
+
+fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+    validate_url(url)?;
+    println!("{}", "Viewing first 100 bytes...".blue());
+    let bytes = view_bytes(url)?;
+    println!("First 100 bytes:");
+    for (i, byte) in bytes.iter().enumerate() {
+        print!("{:02X} ", byte);
+        if (i + 1) % 16 == 0 {
+            println!();
+        }
+    }
+    println!();
+    Ok(())
 }
 
 fn validate_url(url: &str) -> Result<(), Box<dyn std::error::Error>> {

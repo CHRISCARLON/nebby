@@ -1,3 +1,4 @@
 // src/lib.rs
-pub mod excel_file_functions;
-pub mod reqwest_functions;
+pub mod api;
+pub mod bytes;
+pub mod excel;
