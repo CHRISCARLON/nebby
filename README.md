@@ -4,7 +4,7 @@ Nebby is a command-line tool for all you nosey parkers out there.
 
 Quickly review basic information about a range of different file formats.
 
-nebb + command + url and away you go.
+nebb + command + url and away you go!
 
 > [!NOTE]
 > Nebby is currently under active development. Features and commands may change as the project evolves.
