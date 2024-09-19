@@ -38,7 +38,7 @@ nebb basic-idx <URL> [--header-index <INDEX>]
 ```
 
 ### `basic-json`
-Make a basic API GET request and display the JSON response.
+Make a basic API GET request and display information about how nested the JSON response is.
 ```
 nebb basic-json <URL>
 ```
