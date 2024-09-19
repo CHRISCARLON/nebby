@@ -1,10 +1,12 @@
 mod api;
 mod bytes;
+mod csv;
 mod excel;
 mod utils;
 use api::analyze_json_nesting;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
+use csv::{fetch_remote_csv, process_basic_csv};
 use excel::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
@@ -12,7 +14,7 @@ use excel::{
 use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.3", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.3", about = "Nebby! Quickly review basic information about a range of different file formats", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -21,22 +23,22 @@ struct Cli {
 #[derive(Subcommand, Debug)]
 enum Commands {
     /// Display basic information about an Excel file
-    Basic {
+    BasicXl {
         /// URL of the Excel file
         url: String,
     },
     /// Check formatting of an Excel file
-    Format {
+    FormatXl {
         /// URL of the Excel file
         url: String,
     },
     /// Quick view of an Excel file
-    QuickView {
+    QuickViewXl {
         /// URL of the Excel file
         url: String,
     },
     /// Experimental basic information feature with specified header index
-    BasicIdx {
+    BasicIdxXl {
         /// URL of the Excel file
         url: String,
         /// Index of the header row (0-based)
@@ -53,17 +55,20 @@ enum Commands {
         /// Url of the file
         url: String,
     },
+    /// Basic CSV feature
+    BasicCsv { url: String },
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Basic { url } => process_excel(url, "basic info"),
-        Commands::Format { url } => process_excel(url, "formatting"),
-        Commands::QuickView { url } => process_excel(url, "quick view"),
-        Commands::BasicIdx { url, header_index } => process_excel_with_header(url, *header_index),
+        Commands::BasicXl { url } => process_excel(url, "basic info"),
+        Commands::FormatXl { url } => process_excel(url, "formatting"),
+        Commands::QuickViewXl { url } => process_excel(url, "quick view"),
+        Commands::BasicIdxXl { url, header_index } => process_excel_with_header(url, *header_index),
         Commands::BasicJson { url } => process_json(url),
         Commands::Nibble { url } => process_view_bytes(url),
+        Commands::BasicCsv { url } => process_csv(url),
     }
 }
 
@@ -120,6 +125,15 @@ fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     }
     println!("\nDetected file type: {}", get_file_type_string(&file_type));
     Ok(())
+}
+
+fn process_csv(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+    validate_url(url)?;
+    let pb = create_progress_bar("Processing CSV...");
+    let bytes = fetch_remote_csv(url)?;
+    let result = process_basic_csv(bytes);
+    pb.finish_with_message("CSV Processed");
+    result
 }
 
 fn validate_url(url: &str) -> Result<(), Box<dyn std::error::Error>> {

@@ -1,6 +1,8 @@
 # Nebby 🤥
 
-Nebby is a command-line tool for quickly reviewing basic information about remote Excel (xlsx) files and making simple API GET requests.
+Nebby is a command-line tool for all your nosey parkers out there.
+
+Quickly review basic information about a range of different file formats.
 
 > [!NOTE]
 > Nebby is currently under active development. Features and commands may change as the project evolves.
@@ -33,6 +35,7 @@ nebb quick-view <URL>
 
 ### `basic-idx`
 Display basic information about an Excel file with a specified header index.
+This is useful if the header is not on the first row.
 ```
 nebb basic-idx <URL> [--header-index <INDEX>]
 ```
@@ -51,8 +54,7 @@ nebb basic-json <URL>
 ## Roadmap
 
 - [ ] Add support for additional file formats
-- [ ] Enhance JSON processing capabilities
-- [ ] Implement DataFrame support
+- ✅ Enhance JSON processing capabilities
 - [ ] TBC
 
 ## Author
