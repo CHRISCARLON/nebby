@@ -2,7 +2,7 @@ mod api;
 mod bytes;
 mod excel;
 mod utils;
-use api::simple_api_get_reqwest;
+use api::analyze_json_nesting;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
 use excel::{
@@ -12,7 +12,7 @@ use excel::{
 use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.2", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.3", about = "Nebby - quickly review basic information about remote xlsx files and API GET requests", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -70,7 +70,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
     let pb = create_progress_bar("Processing JSON...");
-    let result = simple_api_get_reqwest(url);
+    let result = analyze_json_nesting(url);
     pb.finish_with_message("JSON Processed");
     result
 }
