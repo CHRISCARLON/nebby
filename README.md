@@ -34,6 +34,8 @@ To install Nebby, use the provided `nebbybuild` script. This script will build a
 
 This script will build the project in release mode and install the `nebb` binary to `/usr/local/bin/`, making it accessible from anywhere on your system.
 
+You need cargo/rust installed to be able to use this build script.
+
 ## Usage
 
 Run Nebby from the command line to access its features:
