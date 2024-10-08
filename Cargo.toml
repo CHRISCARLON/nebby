@@ -6,6 +6,7 @@ edition = "2021"
 # Author and License Information
 authors = ["chris@enmeshed.dev"]
 license = "MIT"
+description = "Nebby is a command-line tool designed to quickly review basic information about a range of different file formats. It provides various commands to interact with Excel, JSON, and CSV files - with more to come!"
 repository = "https://github.com/CHRISCARLON/nebby"
 keywords = ["file-scanner", "data-analysis", "excel", "api", "json", "nested"]
 
