@@ -3,6 +3,11 @@ name = "nebby"
 version = "0.1.3"
 edition = "2021"
 
+# Author and License Information
+authors = ["chris@enmeshed.dev"]
+license = "MIT"
+repository = "https://github.com/CHRISCARLON/nebby"
+
 [[bin]]
 name = "nebb"
 path = "src/main.rs"

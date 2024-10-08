@@ -1,68 +1,67 @@
 # Nebby 🤥
 
-Nebby is a command-line tool for all you nosey parkers out there.
+Nebby is a command-line tool designed to quickly review basic information about a range of different file formats.
 
-Quickly review basic information about a range of different file formats.
+It provides various commands to interact with Excel, JSON, and CSV files - with more to come!
 
-nebb + command + url and away you go!
+## Features
 
-> [!NOTE]
-> Nebby is currently under active development. Features and commands may change as the project evolves.
+- **Excel File Handling**: Display basic information, check formatting, and quick view essential info.
+- **CSV Support**: Basic CSV sniff feature.
+- **JSON Handling**: Experimental basic API request feature - see how nested an json response is.
+- **File Byte Inspection**: Examine the bytes of any file - useful for getting info on file signatures.
+- **Flexible Command Interface**: Easily extendable with new commands.
+
+## Installation
+
+To install Nebby, use the provided `nebbybuild` script. This script will build and install the binary for you:
+
+1. Clone the repository:
+   ```bash
+   git clone git@github.com:enmeshed-analytics/duckdb-postgis.git
+   cd nebby
+   ```
+
+2. Give execute permission to the build script:
+   ```bash
+   chmod +x nebbybuild
+   ```
+
+3. Run the build script:
+   ```bash
+   ./nebbybuild
+   ```
+
+This script will build the project in release mode and install the `nebb` binary to `/usr/local/bin/`, making it accessible from anywhere on your system.
 
 ## Usage
 
-```
-nebb <COMMAND>
-```
+Run Nebby from the command line to access its features:
 
-## Commands
-
-### `basic`
-Display basic information about an Excel file.
-```
-nebb basic <URL>
+```bash
+nebb <COMMAND> <URL>
 ```
 
-### `format`
-Check formatting of an Excel file.
-```
-nebb format <URL>
-```
+### Commands
 
-### `quick-view`
-Quick view of an Excel file.
-```
-nebb quick-view <URL>
-```
+- `basic-xl`: Display basic information about an Excel file.
+- `format-xl`: Check formatting of an Excel file.
+- `quick-view-xl`: Quick view of an Excel file.
+- `basic-idx-xl`: Experimental feature to display basic information with a specified header index.
+- `basic-json`: Experimental basic API request feature.
+- `nibble`: Check bytes of any file.
+- `basic-csv`: Basic CSV feature.
+- `help`: Print help message or the help of the given subcommand(s).
 
-### `basic-idx`
-Display basic information about an Excel file with a specified header index.
-This is useful if the header is not on the first row.
-```
-nebb basic-idx <URL> [--header-index <INDEX>]
-```
+### Options
 
-### `basic-json`
-Make a basic API GET request and display information about how nested the JSON response is.
-```
-nebb basic-json <URL>
-```
+- `-h`, `--help`: Print help information.
+- `-V`, `--version`: Print version information.
 
-## Options
+## Contributing
 
-- `-h`, `--help`: Print help information
-- `-V`, `--version`: Print version information
+Contributions are welcome! Please fork the repository and submit a pull request for any improvements or bug fixes.
 
-## Roadmap
+## License
 
-- [ ] Add support for additional file formats
-- ✅ Enhance JSON processing capabilities
-- [ ] TBC
-
-## Author
-
-Christopher Carlon
-
-## Version
-
-0.1.3
+This project is licensed under the MIT License.
