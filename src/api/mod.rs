@@ -3,6 +3,7 @@ use reqwest::blocking::get;
 use serde_json::Value;
 use std::error::Error;
 
+// Define nesting levels
 #[derive(Debug)]
 enum NestingLevel {
     Flat,     // No nesting, or a very shallow structure

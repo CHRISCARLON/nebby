@@ -4,10 +4,13 @@ use comfy_table::{Attribute, Cell, Color, Table};
 use reqwest::blocking::get;
 use std::io::Cursor;
 
+// Check formatting
 pub fn analyze_excel_formatting(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     // Create new workbook
-    let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
+    let cursor = Cursor::new(content);
+    let mut workbook: Xlsx<_> = Xlsx::new(cursor)?;
 
+    // Loop through sheets
     for (index, sheet_name) in workbook.sheet_names().to_vec().iter().enumerate() {
         println!("{}", format!("Analysing sheet: {}", sheet_name).cyan());
         if let Some(Ok(range)) = workbook.worksheet_range_at(index) {
@@ -76,7 +79,9 @@ pub fn analyze_excel_formatting(content: Vec<u8>) -> Result<(), Box<dyn std::err
     Ok(())
 }
 
+// Quick view
 pub fn excel_quick_view(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+    // Create new workbook
     let cursor = Cursor::new(content);
     let mut workbook: Xlsx<_> = Xlsx::new(cursor)?;
 
@@ -142,9 +147,11 @@ pub fn excel_quick_view(content: Vec<u8>) -> Result<(), Box<dyn std::error::Erro
     Ok(())
 }
 
+// Display basic info
 pub fn display_remote_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     // Create new workbook
-    let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
+    let cursor = Cursor::new(content);
+    let mut workbook: Xlsx<_> = Xlsx::new(cursor)?;
 
     // Add sheet names to list
     let sheet_names = workbook.sheet_names().to_vec();
@@ -235,14 +242,18 @@ pub fn display_remote_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::er
     Ok(())
 }
 
+// Display basic info + add starting header
 pub fn display_remote_basic_info_specify_header_idx(
     content: Vec<u8>,
     header_index: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Create new workbook
-    let mut workbook: Xlsx<_> = Xlsx::new(Cursor::new(content))?;
+    let cursor = Cursor::new(content);
+    let mut workbook: Xlsx<_> = Xlsx::new(cursor)?;
+
     // Add sheet names to list
     let sheet_names = workbook.sheet_names().to_vec();
+
     // Loop through sheet names
     for (index, sheet_name) in sheet_names.iter().enumerate() {
         if let Some(Ok(range)) = workbook.worksheet_range_at(index) {
@@ -324,8 +335,13 @@ pub fn display_remote_basic_info_specify_header_idx(
     Ok(())
 }
 
+// Fetch file
 pub fn fetch_remote_file(url: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    let response = get(url)?;
-    let content = response.bytes()?.to_vec();
-    Ok(content)
+    match get(url) {
+        Ok(response) => match response.bytes() {
+            Ok(bytes) => Ok(bytes.to_vec()),
+            Err(e) => Err(Box::new(e)),
+        },
+        Err(e) => Err(Box::new(e)),
+    }
 }

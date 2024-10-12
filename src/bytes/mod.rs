@@ -1,6 +1,7 @@
 use reqwest::blocking::get;
 use std::io::Read;
 
+// Define filetypes
 #[derive(Debug, PartialEq)]
 pub enum FileType {
     PDF,
@@ -16,17 +17,27 @@ pub enum FileType {
     Unknown,
 }
 
+// Get bytes
 pub fn view_bytes(url: &str) -> Result<([u8; 100], FileType), Box<dyn std::error::Error>> {
-    let response = get(url)?;
-    let mut buffer = [0u8; 100];
-    let bytes_read = response.take(100).read(&mut buffer)?;
-    if bytes_read < 100 {
-        buffer[bytes_read..].fill(0);
+    match get(url) {
+        Ok(response) => {
+            let mut buffer = [0u8; 100];
+            match response.take(100).read(&mut buffer) {
+                Ok(bytes_read) => {
+                    if bytes_read < 100 {
+                        buffer[bytes_read..].fill(0);
+                    }
+                    let file_type = identify_file_type(&buffer);
+                    Ok((buffer, file_type))
+                }
+                Err(e) => Err(Box::new(e)),
+            }
+        }
+        Err(e) => Err(Box::new(e)),
     }
-    let file_type = identify_file_type(&buffer);
-    Ok((buffer, file_type))
 }
 
+// Filetype logic
 fn identify_file_type(bytes: &[u8]) -> FileType {
     match bytes {
         // PDF magic number
@@ -59,6 +70,7 @@ fn identify_file_type(bytes: &[u8]) -> FileType {
     }
 }
 
+// Fields to match on
 pub fn get_file_type_string(file_type: &FileType) -> &'static str {
     match file_type {
         FileType::PDF => "PDF",
