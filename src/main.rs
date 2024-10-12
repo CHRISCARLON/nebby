@@ -13,6 +13,7 @@ use excel::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
 };
+use tokio;
 use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
@@ -69,7 +70,8 @@ enum Commands {
 }
 
 // Call commands and file logic
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     match &cli.command {
         Commands::BasicXl { url } => process_excel(url, "basic info"),
@@ -79,7 +81,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::BasicJson { url } => process_json(url),
         Commands::Nibble { url } => process_view_bytes(url),
         Commands::BasicCsv { url } => process_csv(url),
-        Commands::DeltaLake { s3_uri } => process_delta_lake(s3_uri),
+        Commands::DeltaLake { s3_uri } => process_delta_lake(s3_uri).await,
     }
 }
 
@@ -157,11 +159,11 @@ fn process_csv(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     result
 }
 
-fn process_delta_lake(s3_uri: &str) -> Result<(), Box<dyn std::error::Error>> {
+async fn process_delta_lake(s3_uri: &str) -> Result<(), Box<dyn std::error::Error>> {
     let pb = create_progress_bar("Processing Delta Lake table...");
 
-    match get_aws_config() {
-        Ok(config) => match load_remote_delta_lake_table_info(s3_uri, config) {
+    match get_aws_config().await {
+        Ok(config) => match load_remote_delta_lake_table_info(s3_uri, config).await {
             Ok(_table) => {
                 pb.finish_with_message("Successfully loaded the Delta table");
                 Ok(())
