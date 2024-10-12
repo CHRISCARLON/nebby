@@ -1,12 +1,14 @@
 mod api;
 mod bytes;
 mod csv;
+mod delta_lake;
 mod excel;
 mod utils;
 use api::analyze_json_nesting;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
 use csv::{fetch_remote_csv, process_basic_csv};
+use delta_lake::{get_aws_config, load_remote_delta_lake_table_info};
 use excel::{
     analyze_excel_formatting, display_remote_basic_info,
     display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
@@ -58,6 +60,12 @@ enum Commands {
     },
     /// Basic CSV feature
     BasicCsv { url: String },
+    /// Process Delta Lake table
+    DeltaLake {
+        /// S3 URI of the Delta Lake table
+        #[arg(short, long)]
+        s3_uri: String,
+    },
 }
 
 // Call commands and file logic
@@ -71,6 +79,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::BasicJson { url } => process_json(url),
         Commands::Nibble { url } => process_view_bytes(url),
         Commands::BasicCsv { url } => process_csv(url),
+        Commands::DeltaLake { s3_uri } => process_delta_lake(s3_uri),
     }
 }
 
@@ -146,6 +155,29 @@ fn process_csv(url: &str) -> Result<(), Box<dyn std::error::Error>> {
 
     pb.finish_with_message("CSV Processed");
     result
+}
+
+fn process_delta_lake(s3_uri: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let pb = create_progress_bar("Processing Delta Lake table...");
+
+    match get_aws_config() {
+        Ok(config) => match load_remote_delta_lake_table_info(s3_uri, config) {
+            Ok(_table) => {
+                pb.finish_with_message("Successfully loaded the Delta table");
+                Ok(())
+            }
+            Err(e) => {
+                pb.finish_with_message("Error loading the Delta table");
+                eprintln!("Error loading the Delta table: {}", e);
+                Err(e.into())
+            }
+        },
+        Err(e) => {
+            pb.finish_with_message("Error getting AWS configuration");
+            eprintln!("Error getting AWS configuration: {}", e);
+            Err(e.into())
+        }
+    }
 }
 
 fn validate_url(url: &str) -> Result<(), Box<dyn std::error::Error>> {
