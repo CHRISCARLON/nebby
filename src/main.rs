@@ -20,6 +20,7 @@ struct Cli {
     command: Commands,
 }
 
+// Define Commands
 #[derive(Subcommand, Debug)]
 enum Commands {
     /// Display basic information about an Excel file
@@ -59,6 +60,7 @@ enum Commands {
     BasicCsv { url: String },
 }
 
+// Call commands and file logic
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     match &cli.command {
@@ -72,16 +74,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
+// file logic
 fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
+
     let pb = create_progress_bar("Processing JSON...");
     let result = analyze_json_nesting(url);
+
     pb.finish_with_message("JSON Processed");
     result
 }
 
 fn process_excel(url: &str, operation: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
+
     let pb = create_progress_bar(&format!("Processing Excel {}...", operation));
     let bytes = fetch_remote_file(url)?;
 
@@ -101,10 +107,12 @@ fn process_excel_with_header(
     header_index: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
+
     let pb = create_progress_bar(&format!(
         "Processing Excel with header set at INDEX {}...",
         header_index
     ));
+
     let bytes = fetch_remote_file(url)?;
     let result = display_remote_basic_info_specify_header_idx(bytes, header_index);
     pb.finish_with_message("Excel processing with header complete");
@@ -113,9 +121,11 @@ fn process_excel_with_header(
 
 fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
+
     let pb = create_progress_bar("Viewing first 100 bytes...");
     let (bytes, file_type) = view_bytes(url)?;
     pb.finish_and_clear();
+
     println!("First 100 bytes:");
     for (i, byte) in bytes.iter().enumerate() {
         print!("{:02X} ", byte);
@@ -129,9 +139,11 @@ fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
 
 fn process_csv(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
+
     let pb = create_progress_bar("Processing CSV...");
     let bytes = fetch_remote_csv(url)?;
     let result = process_basic_csv(bytes);
+
     pb.finish_with_message("CSV Processed");
     result
 }
