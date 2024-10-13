@@ -53,6 +53,7 @@ nebb <COMMAND> <URL>
 - `basic-json`: Experimental basic API request feature.
 - `nibble`: Check bytes of any file.
 - `basic-csv`: Basic CSV feature.
+- `delta-lake`: Process Delta Lake table from AWS S3.
 - `help`: Print help message or the help of the given subcommand(s).
 
 ### Options
