@@ -17,7 +17,7 @@ use tokio;
 use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.3", about = "Nebby! Quickly review basic information about a range of different file formats", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.4", about = "Nebby! Quickly review basic information about a range of different file formats", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
