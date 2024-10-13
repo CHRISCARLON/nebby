@@ -1,8 +1,12 @@
 use aws_config;
 use aws_config::BehaviorVersion;
 use aws_sdk_sts::config::ProvideCredentials;
-use deltalake::{open_table_with_storage_options, DeltaTableError};
+use colored::Colorize;
+use deltalake::arrow::record_batch::RecordBatch;
+use deltalake::datafusion::execution::context::SessionContext;
+use deltalake::{open_table_with_storage_options, DeltaOps, DeltaTableError};
 use std::collections::HashMap;
+use std::sync::Arc;
 use std::time::Duration;
 
 // Load AWS Creds into a hashmap for use with delta lake reader
@@ -58,14 +62,52 @@ pub async fn load_remote_delta_lake_table_info(
     deltalake_aws::register_handlers(None);
 
     // open delta lake table
-    let remote_delta_lake_table = open_table_with_storage_options(s3_uri, storage_options).await?;
+    let table = match open_table_with_storage_options(s3_uri, storage_options).await {
+        Ok(tbl) => tbl,
+        Err(_) => {
+            let ops = DeltaOps::try_from_uri(s3_uri).await?;
+            ops.create().with_table_name("data").await?
+        }
+    };
 
-    // Get and print the latest version
-    let version = remote_delta_lake_table.version();
-    println!("Current version: {:?}", version);
+    // Start DataFusion context
+    let ctx = SessionContext::new();
 
-    // Get and print the table URI
-    let uri = remote_delta_lake_table.table_uri();
-    println!("Table URI: {}", uri);
+    // Register table
+    ctx.register_table("data", Arc::new(table)).unwrap();
+
+    // Create batches
+    let batches = ctx
+        .sql("SELECT * FROM data")
+        .await
+        .unwrap()
+        .collect()
+        .await
+        .unwrap();
+
+    for batch in batches {
+        println!("{}", "DeltaLake Output: Columns and RecordBatch.".green());
+        process_record_batch(&batch);
+        println!("Record Batch: {:?}", batch);
+    }
+
     Ok(())
+}
+
+fn process_record_batch(batch: &RecordBatch) {
+    println!("Number of columns: {}", batch.num_columns());
+    println!("Number of rows: {}", batch.num_rows());
+
+    let schema = batch.schema();
+
+    for i in 0..batch.num_columns() {
+        let field = schema.field(i);
+
+        println!(
+            "Column {}: '{}' (Type: {:?})",
+            i,
+            field.name(),
+            field.data_type()
+        );
+    }
 }
