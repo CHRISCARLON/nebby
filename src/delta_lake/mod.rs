@@ -4,7 +4,7 @@ use aws_sdk_sts::config::ProvideCredentials;
 use colored::Colorize;
 use deltalake::arrow::record_batch::RecordBatch;
 use deltalake::datafusion::execution::context::SessionContext;
-use deltalake::{open_table_with_storage_options, DeltaOps, DeltaTableError};
+use deltalake::{open_table_with_storage_options, DeltaOps};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
@@ -54,7 +54,7 @@ pub async fn get_aws_config() -> Result<HashMap<String, String>, Box<dyn std::er
 pub async fn load_remote_delta_lake_table_info(
     s3_uri: &str,
     credential_hash_map: HashMap<String, String>,
-) -> Result<(), DeltaTableError> {
+) -> Result<(), Box<dyn std::error::Error>> {
     // load credentials
     let storage_options: HashMap<String, String> = credential_hash_map;
 
@@ -74,16 +74,18 @@ pub async fn load_remote_delta_lake_table_info(
     let ctx = SessionContext::new();
 
     // Register table
-    ctx.register_table("data", Arc::new(table)).unwrap();
+    // Register table
+    ctx.register_table("data", Arc::new(table))
+        .map_err(|e| format!("Failed to register table: {}", e))?;
 
     // Create batches
     let batches = ctx
         .sql("SELECT * FROM data")
         .await
-        .unwrap()
+        .map_err(|e| format!("SQL Query Failed: {}", e))?
         .collect()
         .await
-        .unwrap();
+        .map_err(|e| format!("Could not read results: {}", e))?;
 
     for batch in batches {
         println!("{}", "DeltaLake Output: Columns and RecordBatch.".green());
