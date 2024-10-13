@@ -61,7 +61,7 @@ enum Commands {
     },
     /// Basic CSV feature
     BasicCsv { url: String },
-    /// Process Delta Lake table
+    /// Process Delta Lake table from AWS S3
     DeltaLake {
         /// S3 URI of the Delta Lake table
         #[arg(short, long)]
@@ -69,7 +69,7 @@ enum Commands {
     },
 }
 
-// Call commands and file logic
+// Call commands and File Logic
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
@@ -85,7 +85,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-// file logic
+// File Logic
 fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
 

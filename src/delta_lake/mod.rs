@@ -50,7 +50,7 @@ pub async fn get_aws_config() -> Result<HashMap<String, String>, Box<dyn std::er
     Ok(aws_info)
 }
 
-// Read basic info about delta lake stored in S3
+// Read DeltaLake table stored in S3
 pub async fn load_remote_delta_lake_table_info(
     s3_uri: &str,
     credential_hash_map: HashMap<String, String>,
@@ -94,6 +94,8 @@ pub async fn load_remote_delta_lake_table_info(
     Ok(())
 }
 
+// Process DeltaLake table stored in S3
+// Processes the returned Arrow RecordBatch
 fn process_record_batch(batch: &RecordBatch) {
     println!("Number of columns: {}", batch.num_columns());
     println!("Number of rows: {}", batch.num_rows());
