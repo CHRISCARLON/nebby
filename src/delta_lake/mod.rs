@@ -74,7 +74,6 @@ pub async fn load_remote_delta_lake_table_info(
     let ctx = SessionContext::new();
 
     // Register table
-    // Register table
     ctx.register_table("data", Arc::new(table))
         .map_err(|e| format!("Failed to register table: {}", e))?;
 
