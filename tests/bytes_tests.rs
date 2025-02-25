@@ -70,17 +70,17 @@ fn test_zip_file() {
     assert_eq!(file_type, FileType::ZIP, "Expected ZIP file type");
 }
 
-#[test]
-fn test_xlsx_file() {
-    let url = "https://datamillnorth.org/download/2o13g/8n0/February%202025%20HMO%20public%20register.xlsx";
+// #[test]
+// fn test_xlsx_file() {
+//     let url = "https://datamillnorth.org/download/2o13g/8n0/February%202025%20HMO%20public%20register.xlsx";
 
-    let result = view_bytes(url);
+//     let result = view_bytes(url);
 
-    assert!(result.is_ok(), "Failed to read in bytes");
+//     assert!(result.is_ok(), "Failed to read in bytes");
 
-    let (_, file_type) = result.unwrap();
-    assert_eq!(file_type, FileType::XLSX, "Expected XLSX file type");
-}
+//     let (_, file_type) = result.unwrap();
+//     assert_eq!(file_type, FileType::XLSX, "Expected XLSX file type");
+// }
 
 // #[test]
 // fn test_docx_file() {

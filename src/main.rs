@@ -14,7 +14,7 @@ use excel::{
     analyze_excel_formatting, display_basic_info,
     display_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file, fetch_local_file
 };
-use parquet::parquet_display_basic_info;
+use parquet::ParquetFile;
 use tokio;
 use utils::create_progress_bar;
 
@@ -119,7 +119,7 @@ fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
 
 async fn process_parquet(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let pb = create_progress_bar("Processing Parquet...");
-    let result = parquet_display_basic_info(path).await;
+    let result = ParquetFile::new(path).display_basic_info().await;
     pb.finish_with_message("Parquet Processed");
     result
 }
