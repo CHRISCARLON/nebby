@@ -1,4 +1,4 @@
-use nebby::api::analyze_json_nesting;
+use nebby::json::analyze_json_nesting;
 
 #[test]
 fn test_simple_api_get_reqwest() {

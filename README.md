@@ -60,6 +60,7 @@ adding a "--local" flag will process the file locally for xl file commands.
 - `nibble`: Check bytes of any file.
 - `basic-csv`: Basic CSV feature.
 - `delta-lake`: Process Delta Lake table from AWS S3.
+- `basic-parquet`: Basic Parquet display feature.
 - `help`: Print help message or the help of the given subcommand(s).
 
 ### Options

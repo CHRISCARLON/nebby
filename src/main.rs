@@ -1,11 +1,11 @@
-mod api;
+mod json;
 mod bytes;
 mod csv;
 mod delta_lake;
 mod excel;
 mod utils;
 mod parquet;
-use api::analyze_json_nesting;
+use json::analyze_json_nesting;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
 use csv::{fetch_remote_csv, process_basic_csv};
@@ -105,6 +105,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 // File Logic
 // TODO: all this logic needs to be moved into its own crate 
 // TODO: remove validate url doesn't need to be called in every remote file function - not needed
+// TODO: add local flag to all commands that could support it
+// TODO: combine all the process_ functions into one
 fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
 

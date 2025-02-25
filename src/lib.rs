@@ -1,4 +1,4 @@
-pub mod api;
+pub mod json;
 pub mod bytes;
 pub mod csv;
 pub mod delta_lake;
