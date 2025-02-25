@@ -1,6 +1,7 @@
 use datafusion::prelude::*;
 use colored::Colorize;
 
+//TODO: add in remote parquet file support
 pub async fn parquet_display_basic_info(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     // Create a new session context
     let ctx = SessionContext::new();
@@ -82,3 +83,4 @@ pub async fn parquet_display_basic_info(path: &str) -> Result<(), Box<dyn std::e
 
     Ok(())
 }
+
