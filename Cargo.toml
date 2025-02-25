@@ -36,6 +36,7 @@ deltalake = { version = "0.20.1", features = [
 ] }
 deltalake-aws = "0.3.0"
 tokio = { version = "1.39.3", features = ["full"] }
+datafusion = "45.0.0"
 
 [lib]
 name = "nebby"

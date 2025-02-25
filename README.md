@@ -6,9 +6,10 @@ It provides various commands to interact with Excel, JSON, and CSV files - with 
 
 ## Features
 
-- **Excel File Handling**: Display basic information, check formatting, and quick view essential info.
-- **CSV Support**: Basic CSV sniff feature.
-- **JSON Handling**: Experimental basic API request feature - see how nested an json response is.
+- **Excel**: Display basic information, check formatting, and quick view essential info.
+- **CSV**: Basic CSV sniff feature.
+- **Parquet**: Basic Parquet display feature.
+- **JSON**: Experimental basic API request feature - see how nested an json response is.
 - **File Byte Inspection**: Examine the bytes of any file - useful for getting info on file signatures.
 - **Flexible Command Interface**: Easily extendable with new commands.
 

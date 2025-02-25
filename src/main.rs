@@ -4,6 +4,7 @@ mod csv;
 mod delta_lake;
 mod excel;
 mod utils;
+mod parquet;
 use api::analyze_json_nesting;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
@@ -13,6 +14,7 @@ use excel::{
     analyze_excel_formatting, display_basic_info,
     display_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file, fetch_local_file
 };
+use parquet::parquet_display_basic_info;
 use tokio;
 use utils::create_progress_bar;
 
@@ -79,6 +81,8 @@ enum Commands {
         #[arg(short, long)]
         s3_uri: String,
     },
+    /// Basic Parquet feature
+    BasicParquet { path: String },
 }
 
 // Call commands and File Logic
@@ -94,6 +98,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::Nibble { url } => process_view_bytes(url),
         Commands::BasicCsv { url } => process_csv(url),
         Commands::DeltaLake { s3_uri } => process_delta_lake(s3_uri).await,
+        Commands::BasicParquet { path } => process_parquet(path).await,
     }
 }
 
@@ -107,6 +112,13 @@ fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     let result = analyze_json_nesting(url);
 
     pb.finish_with_message("JSON Processed");
+    result
+}
+
+async fn process_parquet(path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let pb = create_progress_bar("Processing Parquet...");
+    let result = parquet_display_basic_info(path).await;
+    pb.finish_with_message("Parquet Processed");
     result
 }
 
