@@ -1,11 +1,11 @@
 use nebby::excel::{
-    analyze_excel_formatting, display_remote_basic_info,
-    display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
+    analyze_excel_formatting, display_basic_info, display_basic_info_specify_header_idx,
+    excel_quick_view, fetch_remote_file,
 };
 
 #[test]
 fn test_file_fetch() {
-    let url = "https://data.london.gov.uk/download/licensed-vehicles-numbers-borough/45c47aba-682d-4be4-b62a-42215203c2ad/Copy%20of%20vehicles-licensed-borough%20%281%29.xls";
+    let url = "https://datamillnorth.org/download/2o13g/8n0/February%202025%20HMO%20public%20register.xlsx";
 
     // Fetch the file
     let fetch_result = fetch_remote_file(url);
@@ -28,7 +28,7 @@ fn test_display_remote_basic_info() {
     let content = fetch_remote_file(url).expect("Failed to fetch remote file");
 
     // Now pass the content
-    let result = display_remote_basic_info(content);
+    let result = display_basic_info(content);
 
     assert!(result.is_ok());
     // Add more specific assertions based on the expected output
@@ -70,7 +70,7 @@ fn test_display_remote_basic_info_specify_header_idx() {
     let content = fetch_remote_file(url).expect("Failed to fetch remote file");
 
     // Now pass the content
-    let result = display_remote_basic_info_specify_header_idx(content, 3);
+    let result = display_basic_info_specify_header_idx(content, 3);
 
     assert!(result.is_ok());
     // Add more specific assertions based on the expected output

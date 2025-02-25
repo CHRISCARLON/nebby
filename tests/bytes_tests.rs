@@ -72,7 +72,7 @@ fn test_zip_file() {
 
 #[test]
 fn test_xlsx_file() {
-    let url = "https://data.london.gov.uk/download/lfb-financial-and-performance-reporting-2024-25/b3d19255-a65b-4330-8be5-ff50c0286bf0/LFB%20KPI%20report%20-%20data%20up%20to%202024.06%20%28July%20report%29%20–%20dataset%20V2%20%28as%20at%2024.07.2024%29.xlsx";
+    let url = "https://datamillnorth.org/download/2o13g/8n0/February%202025%20HMO%20public%20register.xlsx";
 
     let result = view_bytes(url);
 

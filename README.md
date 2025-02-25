@@ -17,17 +17,20 @@ It provides various commands to interact with Excel, JSON, and CSV files - with 
 To install Nebby, use the provided `nebbybuild` script. This script will build and install the binary for you:
 
 1. Clone the repository:
+
    ```bash
    git clone git@github.com:enmeshed-analytics/duckdb-postgis.git
    cd nebby
    ```
 
 2. Give execute permission to the build script:
+
    ```bash
    chmod +x nebbybuild
    ```
 
 3. Run the build script:
+
    ```bash
    ./nebbybuild
    ```
@@ -45,6 +48,8 @@ nebb <COMMAND> <URL>
 ```
 
 ### Commands
+
+adding a "--local" flag will process the file locally for xl file commands.
 
 - `basic-xl`: Display basic information about an Excel file.
 - `format-xl`: Check formatting of an Excel file.

@@ -10,14 +10,14 @@ use clap::{Parser, Subcommand};
 use csv::{fetch_remote_csv, process_basic_csv};
 use delta_lake::{get_aws_config, load_remote_delta_lake_table_info};
 use excel::{
-    analyze_excel_formatting, display_remote_basic_info,
-    display_remote_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file,
+    analyze_excel_formatting, display_basic_info,
+    display_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file, fetch_local_file
 };
 use tokio;
 use utils::create_progress_bar;
 
 #[derive(Parser, Debug)]
-#[command(author = "Christopher Carlon", version = "0.1.4", about = "Nebby! Quickly review basic information about a range of different file formats", long_about = None)]
+#[command(author = "Christopher Carlon", version = "0.1.5", about = "Nebby! Quickly review basic information about a range of different file formats", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -29,25 +29,37 @@ enum Commands {
     /// Display basic information about an Excel file
     BasicXl {
         /// URL of the Excel file
-        url: String,
+        path: String,
+        /// Path to the local Excel file
+        #[arg(short, long, help = "If true, the file will be processed locally")]
+        local: bool,
     },
     /// Check formatting of an Excel file
     FormatXl {
         /// URL of the Excel file
-        url: String,
+        path: String,
+        /// Path to the local Excel file
+        #[arg(short, long, help = "If true, the file will be processed locally")]
+        local: bool,
     },
     /// Quick view of an Excel file
     QuickViewXl {
         /// URL of the Excel file
-        url: String,
+        path: String,
+        /// Path to the local Excel file
+        #[arg(short, long, help = "If true, the file will be processed locally")]
+        local: bool,
     },
     /// Experimental basic information feature with specified header index
     BasicIdxXl {
         /// URL of the Excel file
-        url: String,
+        path: String,
         /// Index of the header row (0-based)
         #[arg(short, long, default_value = "0")]
         header_index: usize,
+        /// Path to the local Excel file
+        #[arg(short, long, help = "If true, the file will be processed locally")]
+        local: bool,
     },
     /// Experimental basic API request feature
     BasicJson {
@@ -74,10 +86,10 @@ enum Commands {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::BasicXl { url } => process_excel(url, "basic info"),
-        Commands::FormatXl { url } => process_excel(url, "formatting"),
-        Commands::QuickViewXl { url } => process_excel(url, "quick view"),
-        Commands::BasicIdxXl { url, header_index } => process_excel_with_header(url, *header_index),
+        Commands::BasicXl { path, local } => process_excel(path, "basic info", *local),
+        Commands::FormatXl { path, local } => process_excel(path, "formatting", *local),
+        Commands::QuickViewXl { path, local} => process_excel(path, "quick view", *local),
+        Commands::BasicIdxXl { path, header_index, local } => process_excel_with_header(path, *header_index, *local),
         Commands::BasicJson { url } => process_json(url),
         Commands::Nibble { url } => process_view_bytes(url),
         Commands::BasicCsv { url } => process_csv(url),
@@ -86,6 +98,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 // File Logic
+// TODO: all this logic needs to be moved into its own crate 
+// TODO: remove validate url doesn't need to be called in every remote file function - not needed
 fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
 
@@ -96,17 +110,29 @@ fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     result
 }
 
-fn process_excel(url: &str, operation: &str) -> Result<(), Box<dyn std::error::Error>> {
-    validate_url(url)?;
-
+fn process_excel(url: &str, operation: &str, local: bool) -> Result<(), Box<dyn std::error::Error>> {
     let pb = create_progress_bar(&format!("Processing Excel {}...", operation));
-    let bytes = fetch_remote_file(url)?;
-
-    let result = match operation {
-        "basic info" => display_remote_basic_info(bytes),
-        "formatting" => analyze_excel_formatting(bytes),
-        "quick view" => excel_quick_view(bytes),
-        _ => Err("Unknown operation".into()),
+    
+    let result = match local {
+        true => {
+            let bytes = fetch_local_file(url)?;
+            match operation {
+                "basic info" => display_basic_info(bytes),
+                "formatting" => analyze_excel_formatting(bytes),
+                "quick view" => excel_quick_view(bytes),
+                _ => Err("Unknown operation".into()),
+            }
+        },
+        false => {
+            validate_url(url)?;
+            let bytes = fetch_remote_file(url)?;
+            match operation {
+                "basic info" => display_basic_info(bytes),
+                "formatting" => analyze_excel_formatting(bytes),
+                "quick view" => excel_quick_view(bytes),
+                _ => Err("Unknown operation".into()),
+            }
+        }
     };
 
     pb.finish_with_message("Excel Processed");
@@ -116,16 +142,26 @@ fn process_excel(url: &str, operation: &str) -> Result<(), Box<dyn std::error::E
 fn process_excel_with_header(
     url: &str,
     header_index: usize,
+    local: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    validate_url(url)?;
-
+    
     let pb = create_progress_bar(&format!(
         "Processing Excel with header set at INDEX {}...",
         header_index
     ));
 
-    let bytes = fetch_remote_file(url)?;
-    let result = display_remote_basic_info_specify_header_idx(bytes, header_index);
+    let result = match local {
+        true => {
+            let bytes = fetch_local_file(url)?;
+            display_basic_info_specify_header_idx(bytes, header_index)
+        },
+        false => {
+            validate_url(url)?;
+            let bytes = fetch_remote_file(url)?;
+            display_basic_info_specify_header_idx(bytes, header_index)
+        }
+    };      
+
     pb.finish_with_message("Excel processing with header complete");
     result
 }

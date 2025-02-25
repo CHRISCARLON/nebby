@@ -1,9 +1,11 @@
 use calamine::{DataType, Reader, Xlsx};
+use std::{fs::File, io::Read};
 use colored::Colorize;
 use comfy_table::{Attribute, Cell, Color, Table};
 use reqwest::blocking::get;
 use std::io::Cursor;
 
+//TODO: add a proper Excel file struct with some proper traits and impls?
 // Check formatting
 pub fn analyze_excel_formatting(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     // Create new workbook
@@ -148,7 +150,7 @@ pub fn excel_quick_view(content: Vec<u8>) -> Result<(), Box<dyn std::error::Erro
 }
 
 // Display basic info
-pub fn display_remote_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn display_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     // Create new workbook
     let cursor = Cursor::new(content);
     let mut workbook: Xlsx<_> = Xlsx::new(cursor)?;
@@ -243,7 +245,7 @@ pub fn display_remote_basic_info(content: Vec<u8>) -> Result<(), Box<dyn std::er
 }
 
 // Display basic info + add starting header
-pub fn display_remote_basic_info_specify_header_idx(
+pub fn display_basic_info_specify_header_idx(
     content: Vec<u8>,
     header_index: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -342,6 +344,17 @@ pub fn fetch_remote_file(url: &str) -> Result<Vec<u8>, Box<dyn std::error::Error
             Ok(bytes) => Ok(bytes.to_vec()),
             Err(e) => Err(Box::new(e)),
         },
+        Err(e) => Err(Box::new(e)),
+    }
+}
+
+pub fn fetch_local_file(path: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    match File::open(path) {
+        Ok(mut file) => {
+            let mut buffer = Vec::new();
+            file.read_to_end(&mut buffer)?;
+            Ok(buffer)
+        }
         Err(e) => Err(Box::new(e)),
     }
 }
