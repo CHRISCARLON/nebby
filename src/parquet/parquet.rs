@@ -1,18 +1,25 @@
 use datafusion::prelude::*;
 use colored::Colorize;
-
+use crate::processor::Processor;
 pub struct ParquetFile {  
     path: String,
+    operation: Operation,
+}
+
+pub enum Operation {
+    BasicInfo,
 }
 
 //TODO: add in remote parquet file support
-//TODO: add extra impls and structs for other file types
 impl ParquetFile {
     pub fn new(path: &str) -> Self {
-        Self { path: path.to_string() }
+        Self { 
+            path: path.to_string(),
+            operation: Operation::BasicInfo,
+        }
     }
     
-    pub async fn display_basic_info(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn display_basic_info(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         // Create a new session context
         let ctx = SessionContext::new();
         
@@ -97,3 +104,12 @@ impl ParquetFile {
         
 }
 
+impl Processor for ParquetFile {
+    fn process(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        tokio::runtime::Runtime::new()?.block_on(async {
+            match self.operation {
+                Operation::BasicInfo => self.display_basic_info().await,
+            }
+        })
+    }
+}

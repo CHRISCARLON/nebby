@@ -6,14 +6,14 @@ mod excel;
 mod utils;
 mod parquet;
 mod processor;
-use json::analyze_json_nesting;
+use json::JsonResponse;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
 use csv::{fetch_remote_csv, process_basic_csv};
 use delta_lake::{get_aws_config, load_remote_delta_lake_table_info};
 use excel::ExcelFile;
-use processor::ExcelProcessor;
 use parquet::ParquetFile;
+use processor::Processor;
 use tokio;
 use utils::create_progress_bar;
 
@@ -137,11 +137,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             pb.finish_with_message("Excel processing with header complete");
             result
         },
-        Commands::BasicJson { url } => process_json(url),
+        Commands::BasicJson { url } => {
+            let pb = create_progress_bar("Processing JSON...");
+            let result = JsonResponse::new(url, json::Operation::BasicJson).process();
+            pb.finish_with_message("JSON Processed");
+            result
+        },
         Commands::Nibble { url } => process_view_bytes(url),
         Commands::BasicCsv { url } => process_csv(url),
         Commands::DeltaLake { s3_uri } => process_delta_lake(s3_uri).await,
-        Commands::BasicParquet { path } => process_parquet(path).await,
+        Commands::BasicParquet { path } => {
+            let pb = create_progress_bar("Processing Parquet...");
+            let result = ParquetFile::new(path).process();
+            pb.finish_with_message("Parquet Processed");
+            result
+        },
     }
 }
 
@@ -150,22 +160,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 // TODO: remove validate url doesn't need to be called in every remote file function - not needed
 // TODO: add local flag to all commands that could support it
 // TODO: combine all the process_ functions into one
-fn process_json(url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    validate_url(url)?;
-
-    let pb = create_progress_bar("Processing JSON...");
-    let result = analyze_json_nesting(url);
-
-    pb.finish_with_message("JSON Processed");
-    result
-}
-
-async fn process_parquet(path: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let pb = create_progress_bar("Processing Parquet...");
-    let result = ParquetFile::new(path).display_basic_info().await;
-    pb.finish_with_message("Parquet Processed");
-    result
-}
 
 fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;

@@ -4,7 +4,7 @@ use colored::Colorize;
 use comfy_table::{Attribute, Cell, Color, Table};
 use reqwest::blocking::get;
 use std::io::Cursor;
-use crate::processor::ExcelProcessor;
+use crate::processor::Processor;
 
 #[derive(Debug)]
 pub enum Operation {
@@ -369,7 +369,7 @@ impl ExcelFile {
     }
 }
 
-impl ExcelProcessor for ExcelFile {
+impl Processor for ExcelFile {
     fn process(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.operation {
             Operation::BasicInfo => self.display_info(),
