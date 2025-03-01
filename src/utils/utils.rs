@@ -13,3 +13,13 @@ pub fn create_progress_bar(message: &str) -> ProgressBar {
     pb.enable_steady_tick(Duration::from_millis(100));
     pb
 }
+
+pub fn validate_url(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+    if url.is_empty() {
+        return Err("Error: URL cannot be empty".into());
+    }
+    if !url.starts_with("http://") && !url.starts_with("https://") {
+        return Err("Error: URL must start with http:// or https://".into());
+    }
+    Ok(())
+}

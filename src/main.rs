@@ -15,7 +15,7 @@ use excel::ExcelFile;
 use parquet::ParquetFile;
 use processor::Processor;
 use tokio;
-use utils::create_progress_bar;
+use utils::{create_progress_bar, validate_url};
 
 #[derive(Parser, Debug)]
 #[command(author = "Christopher Carlon", version = "0.1.5", about = "Nebby! Quickly review basic information about a range of different file formats", long_about = None)]
@@ -213,12 +213,3 @@ async fn process_delta_lake(s3_uri: &str) -> Result<(), Box<dyn std::error::Erro
     }
 }
 
-fn validate_url(url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    if url.is_empty() {
-        return Err("Error: URL cannot be empty".into());
-    }
-    if !url.starts_with("http://") && !url.starts_with("https://") {
-        return Err("Error: URL must start with http:// or https://".into());
-    }
-    Ok(())
-}
