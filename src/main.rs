@@ -5,15 +5,14 @@ mod delta_lake;
 mod excel;
 mod utils;
 mod parquet;
+mod processor;
 use json::analyze_json_nesting;
 use bytes::{get_file_type_string, view_bytes};
 use clap::{Parser, Subcommand};
 use csv::{fetch_remote_csv, process_basic_csv};
 use delta_lake::{get_aws_config, load_remote_delta_lake_table_info};
-use excel::{
-    analyze_excel_formatting, display_basic_info,
-    display_basic_info_specify_header_idx, excel_quick_view, fetch_remote_file, fetch_local_file
-};
+use excel::ExcelFile;
+use processor::ExcelProcessor;
 use parquet::ParquetFile;
 use tokio;
 use utils::create_progress_bar;
@@ -90,10 +89,54 @@ enum Commands {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::BasicXl { path, local } => process_excel(path, "basic info", *local),
-        Commands::FormatXl { path, local } => process_excel(path, "formatting", *local),
-        Commands::QuickViewXl { path, local} => process_excel(path, "quick view", *local),
-        Commands::BasicIdxXl { path, header_index, local } => process_excel_with_header(path, *header_index, *local),
+        Commands::BasicXl { path, local } => {
+            let pb = create_progress_bar("Processing Excel basic info...");
+            let result = match local {
+                true => ExcelFile::from_path(path, excel::Operation::BasicInfo)?.process(),
+                false => {
+                    validate_url(path)?;
+                    ExcelFile::from_url(path, excel::Operation::BasicInfo)?.process()
+                }
+            };
+            pb.finish_with_message("Excel Processed");
+            result
+        },
+        Commands::FormatXl { path, local } => {
+            let pb = create_progress_bar("Processing Excel formatting...");
+            let result = match local {
+                true => ExcelFile::from_path(path, excel::Operation::Formatting)?.process(),
+                false => {
+                    validate_url(path)?;
+                    ExcelFile::from_url(path, excel::Operation::Formatting)?.process()
+                }
+            };
+            pb.finish_with_message("Excel Processed");
+            result
+        },
+        Commands::QuickViewXl { path, local } => {
+            let pb = create_progress_bar("Processing Excel quick view...");
+            let result = match local {
+                true => ExcelFile::from_path(path, excel::Operation::QuickView)?.process(),
+                false => {
+                    validate_url(path)?;
+                    ExcelFile::from_url(path, excel::Operation::QuickView)?.process()
+                }
+            };
+            pb.finish_with_message("Excel Processed");
+            result
+        },
+        Commands::BasicIdxXl { path, header_index, local } => {
+            let pb = create_progress_bar(&format!("Processing Excel with header at INDEX {}...", header_index));
+            let result = match local {
+                true => ExcelFile::from_path(path, excel::Operation::BasicInfoWithHeader(*header_index))?.process(),
+                false => {
+                    validate_url(path)?;
+                    ExcelFile::from_url(path, excel::Operation::BasicInfoWithHeader(*header_index))?.process()
+                }
+            };
+            pb.finish_with_message("Excel processing with header complete");
+            result
+        },
         Commands::BasicJson { url } => process_json(url),
         Commands::Nibble { url } => process_view_bytes(url),
         Commands::BasicCsv { url } => process_csv(url),
@@ -121,62 +164,6 @@ async fn process_parquet(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let pb = create_progress_bar("Processing Parquet...");
     let result = ParquetFile::new(path).display_basic_info().await;
     pb.finish_with_message("Parquet Processed");
-    result
-}
-
-fn process_excel(url: &str, operation: &str, local: bool) -> Result<(), Box<dyn std::error::Error>> {
-    let pb = create_progress_bar(&format!("Processing Excel {}...", operation));
-    
-    let result = match local {
-        true => {
-            let bytes = fetch_local_file(url)?;
-            match operation {
-                "basic info" => display_basic_info(bytes),
-                "formatting" => analyze_excel_formatting(bytes),
-                "quick view" => excel_quick_view(bytes),
-                _ => Err("Unknown operation".into()),
-            }
-        },
-        false => {
-            validate_url(url)?;
-            let bytes = fetch_remote_file(url)?;
-            match operation {
-                "basic info" => display_basic_info(bytes),
-                "formatting" => analyze_excel_formatting(bytes),
-                "quick view" => excel_quick_view(bytes),
-                _ => Err("Unknown operation".into()),
-            }
-        }
-    };
-
-    pb.finish_with_message("Excel Processed");
-    result
-}
-
-fn process_excel_with_header(
-    url: &str,
-    header_index: usize,
-    local: bool,
-) -> Result<(), Box<dyn std::error::Error>> {
-    
-    let pb = create_progress_bar(&format!(
-        "Processing Excel with header set at INDEX {}...",
-        header_index
-    ));
-
-    let result = match local {
-        true => {
-            let bytes = fetch_local_file(url)?;
-            display_basic_info_specify_header_idx(bytes, header_index)
-        },
-        false => {
-            validate_url(url)?;
-            let bytes = fetch_remote_file(url)?;
-            display_basic_info_specify_header_idx(bytes, header_index)
-        }
-    };      
-
-    pb.finish_with_message("Excel processing with header complete");
     result
 }
 

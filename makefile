@@ -59,8 +59,8 @@ repo-update:
 	@echo ""
 	@echo "Examples:"
 	@echo "  • Press enter to commit all folders"
-	@echo "  • Type 'gridwalk-backend' to commit only backend"
-	@echo "  • Type 'gridwalk-backend gridwalk-ui' to commit backend and UI"
+	@echo "  • Type 'src' to commit only src"
+	@echo "  • Type 'tests' to commit only tests"
 	@echo ""
 	@read -p "Enter the names of the folders you wish to update (space-separated, or just hit enter to update all): " folders; \
 	if [ -z "$$folders" ]; then \
