@@ -2,16 +2,7 @@
 
 Nebby is a command-line tool designed to quickly review basic information about a range of different file formats.
 
-It provides various commands to interact with Excel, JSON, and CSV files - with more to come!
-
-## Features
-
-- **Excel**: Display basic information, check formatting, and quick view essential info.
-- **CSV**: Basic CSV sniff feature.
-- **Parquet**: Basic Parquet display feature.
-- **JSON**: Experimental basic API request feature - see how nested an json response is.
-- **File Byte Inspection**: Examine the bytes of any file - useful for getting info on file signatures.
-- **Flexible Command Interface**: Easily extendable with new commands.
+It provides various commands to read information from various file types and locations.
 
 ## Installation
 
