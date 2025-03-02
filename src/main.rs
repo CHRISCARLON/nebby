@@ -7,7 +7,7 @@ mod utils;
 mod parquet;
 mod processor;
 use json::JsonResponse;
-use bytes::{get_file_type_string, view_bytes};
+use bytes::FileBytes;
 use clap::{Parser, Subcommand};
 use csv::{fetch_remote_csv, process_basic_csv};
 use delta_lake::{get_aws_config, load_remote_delta_lake_table_info};
@@ -70,7 +70,10 @@ enum Commands {
     /// Check bytes of any file
     Nibble {
         /// Url of the file
-        url: String,
+        path: String,
+        /// Path to the local file
+        #[arg(short, long, help = "If true, the file will be processed locally")]
+        local: bool,
     },
     /// Basic CSV feature
     BasicCsv { url: String },
@@ -143,7 +146,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             pb.finish_with_message("JSON Processed");
             result
         },
-        Commands::Nibble { url } => process_view_bytes(url),
+        Commands::Nibble { path, local  } => {
+            let pb = create_progress_bar("Processing Nibble...");
+            let result = match local {
+                true => FileBytes::from_path(path, bytes::Operation::Nibble)?.process(),
+                false => {
+                    validate_url(path)?;
+                    FileBytes::from_url(path, bytes::Operation::Nibble)?.process()
+                }
+            };
+            pb.finish_with_message("Nibble Processed");
+            result
+        },
         Commands::BasicCsv { url } => process_csv(url),
         Commands::DeltaLake { s3_uri } => process_delta_lake(s3_uri).await,
         Commands::BasicParquet { path } => {
@@ -160,24 +174,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 // TODO: remove validate url doesn't need to be called in every remote file function - not needed
 // TODO: add local flag to all commands that could support it
 // TODO: combine all the process_ functions into one
-
-fn process_view_bytes(url: &str) -> Result<(), Box<dyn std::error::Error>> {
-    validate_url(url)?;
-
-    let pb = create_progress_bar("Viewing first 100 bytes...");
-    let (bytes, file_type) = view_bytes(url)?;
-    pb.finish_and_clear();
-
-    println!("First 100 bytes:");
-    for (i, byte) in bytes.iter().enumerate() {
-        print!("{:02X} ", byte);
-        if (i + 1) % 16 == 0 {
-            println!();
-        }
-    }
-    println!("\nDetected file type: {}", get_file_type_string(&file_type));
-    Ok(())
-}
 
 fn process_csv(url: &str) -> Result<(), Box<dyn std::error::Error>> {
     validate_url(url)?;
